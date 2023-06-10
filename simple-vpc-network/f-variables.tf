@@ -33,13 +33,13 @@ variable "subnet_config" {
     public_subnet_2 = {
       Name                    = "simpleInfra_private_1"
       cidr_block              = "10.10.8.0/22"
-      availabilityzone        = "ap-south-1a"
+      availabilityzone        = "ap-south-1b"
       map_public_ip_on_launch = true
     }
     private_subnet_2 = {
       Name                    = "simpleInfra_private_2"
       cidr_block              = "10.10.12.0/22"
-      availabilityzone        = "ap-south-1a"
+      availabilityzone        = "ap-south-1b"
       map_public_ip_on_launch = false
     }
   }
@@ -101,9 +101,9 @@ variable "ec2InstanceConfig" {
       ami                 = "ami-07ffb2f4d65357b42"
       instance_type       = "t2.micro"
       instanceName1       = "TestInstance_1"
-      instanceName2       = "TestInstance_1"
-      instanceName3       = "TestInstance_1"
-      instanceName4       = "TestInstance_1"
+      instanceName2       = "TestInstance_2"
+      instanceName3       = "TestInstance_3"
+      instanceName4       = "TestInstance_4"
     }
   }
 }

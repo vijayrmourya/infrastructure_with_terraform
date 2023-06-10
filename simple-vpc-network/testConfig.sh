@@ -27,4 +27,4 @@ EOF"
 # Restart the web server to reflect the changes
 sudo service apache2 restart
 
-echo "Static web page hosted successfully. You can access it using the public IP address of the EC2 instance."
+#sudo echo "Static web page hosted successfully. You can access it using the public IP address of the EC2 instance." >> status.txt
