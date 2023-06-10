@@ -3,6 +3,8 @@
 # Install dependencies
 sudo apt update
 sudo apt install -y apache2
+sudo apt update
+sudo apt install -y curl
 
 # Get the instance ID and availability zone
 INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)

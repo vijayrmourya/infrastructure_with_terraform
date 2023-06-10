@@ -1,14 +1,8 @@
 variable "vpc_configs" {
-  type = map(object({
-    Name                 = string
-    cidr                 = string
-    instance_tenancy     = string
-    enable_dns_hostnames = bool
-  }))
   default = {
     vpc_1 = {
       Name                 = "simpleInfra_vpc"
-      cidr                 = "10.10.0.0/20"
+      cidr_block           = "10.10.0.0/20"
       instance_tenancy     = "default"
       enable_dns_hostnames = true
     }
@@ -16,100 +10,83 @@ variable "vpc_configs" {
 }
 
 variable "igw_config" {
-  type = map(object({
-    Name = string
-  }))
   default = {
-    igw_1 = {
-      Name = "simpleInfra-igw"
-    }
+    igw_1_name = "simpleInfra_igw"
   }
 }
 
+
 variable "subnet_config" {
-  type = map(object({
-    Name                    = string
-    cidr                    = string
-    availabilityzone        = string
-    map_public_ip_on_launch = bool
-  }))
   default = {
-    public-subnet-1 = {
-      Name                    = "simpleInfra-public-1"
-      cidr                    = "10.10.0.0/22"
+    public_subnet_1 = {
+      Name                    = "simpleInfra_public_1"
+      cidr_block              = "10.10.0.0/22"
       availabilityzone        = "ap-south-1a"
       map_public_ip_on_launch = true
     }
-    public-subnet-2 = {
-      Name                    = "simpleInfra-public-2"
-      cidr                    = "10.10.4.0/22"
+    private_subnet_1 = {
+      Name                    = "simpleInfra_public_2"
+      cidr_block              = "10.10.4.0/22"
       availabilityzone        = "ap-south-1a"
       map_public_ip_on_launch = false
     }
-    private-subnet-1 = {
-      Name                    = "simpleInfra-private-1"
-      cidr                    = "10.10.8.0/22"
-      availabilityzone        = "ap-south-1b"
+    public_subnet_2 = {
+      Name                    = "simpleInfra_private_1"
+      cidr_block              = "10.10.8.0/22"
+      availabilityzone        = "ap-south-1a"
       map_public_ip_on_launch = true
     }
-    private-subnet-2 = {
-      Name                    = "simpleInfra-private-2"
-      cidr                    = "10.10.12.0/22"
-      availabilityzone        = "ap-south-1b"
+    private_subnet_2 = {
+      Name                    = "simpleInfra_private_2"
+      cidr_block              = "10.10.12.0/22"
+      availabilityzone        = "ap-south-1a"
       map_public_ip_on_launch = false
     }
   }
 }
 
 variable "routeTable_config" {
-  type = object({
-    Name                = string
-    create_associations = bool
-  })
   default = {
-    Name                = "simpleInfra_internt_rt"
-    create_associations = true
+    Name = "simpleInfra_internt_rt"
+  }
+}
+
+variable "tlsKeyOptions" {
+  default = {
+    key_1 = {
+      algorithm       = "RSA"
+      rsa_bits        = 4096
+      Key_Name        = "testInstanceName"
+      keyStorePath    = "simpleInfra/test_server_key.pem"
+      file_permission = "0600"
+    }
   }
 }
 
 variable "securityGroup_config" {
-  type = map(object({
-    Name        = string
-    description = string
-  }))
   default = {
     sg_1 = {
-      Name        = "simpleInfra-testInstanceSG"
+      Name        = "simpleInfra_testInstanceSG"
       description = "created by terraform security group module"
     }
   }
 }
 
 variable "securityGroupRules_config" {
-  type = map(object({
-    is_ipv6   = bool
-    type      = string
-    from_port = number
-    to_port   = number
-    protocol  = string
-  }))
   default = {
-    ssh-allow-rule = {
-      is_ipv6   = false
+    ssh_allow_rule = {
       type      = "ingress"
       from_port = 22
       to_port   = 22
       protocol  = "tcp"
     }
-    http-allow-rule = {
-      is_ipv6   = false
+    http_allow_rule = {
       type      = "ingress"
       from_port = 80
       to_port   = 80
       protocol  = "tcp"
     }
-    all-egress-rule = {
-      is_ipv6   = false
+    all_egress_rule = {
       type      = "egress"
       from_port = 0
       to_port   = 0
@@ -118,14 +95,15 @@ variable "securityGroupRules_config" {
   }
 }
 
-variable "tlsKeyOptions" {
+variable "ec2InstanceConfig" {
   default = {
-    key-1 = {
-      algorithm       = "RSA"
-      rsa_bits        = 4096
-      Key_Name        = "testInstanceName"
-      keyStorePath    = "/../../safe-SEC_STORE/testinstances/server-private-key/test_server_key.pem"
-      file_permission = "0600"
+    ubuntu_instance = {
+      ami                 = "ami-07ffb2f4d65357b42"
+      instance_type       = "t2.micro"
+      instanceName1       = "TestInstance_1"
+      instanceName2       = "TestInstance_1"
+      instanceName3       = "TestInstance_1"
+      instanceName4       = "TestInstance_1"
     }
   }
 }

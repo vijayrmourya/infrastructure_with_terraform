@@ -1,103 +1,71 @@
-module "simpleInfra-vpc" {
+module "simpleInfra_vpc" {
   source = "../../terraform-modules/vpc_module"
-  #  refer: https://github.com/vijayrmourya/terraform-modules
+  #  refer: https://github.com/vijayrmourya/terraform_modules
 
-  vpc-config = local.vpc_config
+  vpc_config = local.vpc_config
 }
 
-module "simpleInfra-igw" {
+module "simpleInfra_igw" {
   source = "../../terraform-modules/igw_module"
-  #  refer: https://github.com/vijayrmourya/terraform-modules
+  #  refer: https://github.com/vijayrmourya/terraform_modules
 
-  igw-config = local.igw_config.igw_1
+  igw_config = local.igw_config
 }
 
-module "simpleInfra-subnets" {
+module "simpleInfra_subnets" {
   source = "../../terraform-modules/subnet_module"
-  #  refer: https://github.com/vijayrmourya/terraform-modules
+  #  refer: https://github.com/vijayrmourya/terraform_modules
 
-  subnet-config = local.subnet_config
+  subnet_config = local.subnet_config
 }
 
-module "simpleInfra_route_table_and_association" {
-  source = "../../terraform-modules/routeTabe-module"
-  #  refer: https://github.com/vijayrmourya/terraform-modules
+module "simpleInfra_route_table" {
+  source = "../../terraform-modules/routeTabe_module"
+  #  refer: https://github.com/vijayrmourya/terraform_modules
 
-  rt-igw-internet-association = local.routeTable_config
-  create_association_flag     = local.create_associations
-  subnet_rt_association       = local.subnet_rt_association
+  route_table_config = local.routeTable_config
+}
+
+resource "aws_route" "public_route" {
+  route_table_id         = module.simpleInfra_route_table.route_table_id.simpleInfra_rt_main
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = module.simpleInfra_igw.igw_id.igw_1
+}
+
+resource "aws_route_table_association" "public_route_association_1a" {
+  route_table_id = module.simpleInfra_route_table.route_table_id.simpleInfra_rt_main
+  subnet_id      = module.simpleInfra_subnets.subnet_id.public_subnet_1
+}
+
+resource "aws_route_table_association" "public_route_association_1b" {
+  route_table_id = module.simpleInfra_route_table.route_table_id.simpleInfra_rt_main
+  subnet_id      = module.simpleInfra_subnets.subnet_id.public_subnet_2
 }
 
 module "testInstanceKey" {
-  source = "../../terraform-modules/ec2-key-pair"
+  source = "../../terraform-modules/ec2_key_pair"
 
-  tls_key_options = var.tlsKeyOptions
+  ec2_key_config = local.tlsKeyOptions
 }
 
 data "http" "myip" {
   url = "http://ipv4.icanhazip.com"
 }
 
-module "simpleInfra-securityGroup" {
-  source = "../../terraform-modules/securityGroup-module"
+module "simpleInfra_securityGroup" {
+  source = "../../terraform-modules/securityGroup_module"
 
-  securityGroupConfig = local.securityGroupConfig
+  securityGroup_Config = local.securityGroupConfig
 }
 
-module "simpleInfra-securityGroupRules" {
-  source = "../../terraform-modules/securityGroupRules-module"
+module "simpleInfra_securityGroupRules" {
+  source = "../../terraform-modules/securityGroupRules_module"
 
-  securityRulesConfig = local.securityRulesConfig
+  securityGroupRules_Config = local.securityRulesConfig
 }
-#
-#resource "aws_instance" "ec2_instances-pub1" {
-#  subnet_id              = aws_subnet.simpleInfra-subnet-pub1.id
-#  ami                    = "ami-07ffb2f4d65357b42"
-#  instance_type          = "t3.medium"
-#  user_data              = file("${path.module}/testConfig.sh")
-#  key_name               = aws_key_pair.ec2-key-pair.key_name
-#  vpc_security_group_ids = [aws_security_group.testInstance-securityGroup.id]
-#  tags                   = {
-#    Name   = "simpleInfra-instance"
-#    Source = "Terraform"
-#  }
-#}
-##
-##resource "aws_instance" "ec2_instances-pub2" {
-##  subnet_id              = aws_subnet.simpleInfra-subnet-pub2.id
-##  ami                    = "ami-07ffb2f4d65357b42"
-##  instance_type          = "t3.medium"
-##  user_data              = file("${path.module}/testConfig.sh")
-##  key_name               = aws_key_pair.ec2-key-pair.key_name
-##  vpc_security_group_ids = [aws_security_group.testInstance-securityGroup.id]
-##  tags                   = {
-##    Name   = "simpleInfra-instance"
-##    Source = "Terraform"
-##  }
-##}
-##
-##resource "aws_instance" "ec2_instances-priv1" {
-##  subnet_id              = aws_subnet.simpleInfra-subnet-priv1.id
-##  ami                    = "ami-07ffb2f4d65357b42"
-##  instance_type          = "t3.medium"
-##  user_data              = file("${path.module}/testConfig.sh")
-##  key_name               = aws_key_pair.ec2-key-pair.key_name
-##  vpc_security_group_ids = [aws_security_group.testInstance-securityGroup.id]
-##  tags                   = {
-##    Name   = "simpleInfra-instance"
-##    Source = "Terraform"
-##  }
-##}
-##
-##resource "aws_instance" "ec2_instances-priv2" {
-##  subnet_id              = aws_subnet.simpleInfra-subnet-priv2.id
-##  ami                    = "ami-07ffb2f4d65357b42"
-##  instance_type          = "t3.medium"
-##  user_data              = file("${path.module}/testConfig.sh")
-##  key_name               = aws_key_pair.ec2-key-pair.key_name
-##  vpc_security_group_ids = [aws_security_group.testInstance-securityGroup.id]
-##  tags                   = {
-##    Name   = "simpleInfra-instance"
-##    Source = "Terraform"
-##  }
-##}
+
+module "simpleInfraUbuntu" {
+  source = "../../terraform-modules/ec2_instance"
+
+  ec2Instance_Config = local.instances
+}
