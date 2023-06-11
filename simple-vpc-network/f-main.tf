@@ -1,26 +1,26 @@
 module "simpleInfra_vpc" {
-  source = "../../terraform-modules/vpc_module"
+  source = "../../terraform_modules/vpc_module"
   #  refer: https://github.com/vijayrmourya/terraform_modules
 
   vpc_config = local.vpc_config
 }
 
 module "simpleInfra_igw" {
-  source = "../../terraform-modules/igw_module"
+  source = "../../terraform_modules/igw_module"
   #  refer: https://github.com/vijayrmourya/terraform_modules
 
   igw_config = local.igw_config
 }
 
 module "simpleInfra_subnets" {
-  source = "../../terraform-modules/subnet_module"
+  source = "../../terraform_modules/subnet_module"
   #  refer: https://github.com/vijayrmourya/terraform_modules
 
   subnet_config = local.subnet_config
 }
 
 module "simpleInfra_route_table" {
-  source = "../../terraform-modules/routeTabe_module"
+  source = "../../terraform_modules/routeTabe_module"
   #  refer: https://github.com/vijayrmourya/terraform_modules
 
   route_table_config = local.routeTable_config
@@ -43,7 +43,7 @@ resource "aws_route_table_association" "public_route_association_1b" {
 }
 
 module "testInstanceKey" {
-  source = "../../terraform-modules/ec2_key_pair"
+  source = "../../terraform_modules/ec2_key_pair"
 
   ec2_key_config = local.tlsKeyOptions
 }
@@ -53,19 +53,19 @@ data "http" "myip" {
 }
 
 module "simpleInfra_securityGroup" {
-  source = "../../terraform-modules/securityGroup_module"
+  source = "../../terraform_modules/securityGroup_module"
 
   securityGroup_Config = local.securityGroupConfig
 }
 
 module "simpleInfra_securityGroupRules" {
-  source = "../../terraform-modules/securityGroupRules_module"
+  source = "../../terraform_modules/securityGroupRules_module"
 
   securityGroupRules_Config = local.securityRulesConfig
 }
 
 module "simpleInfraUbuntu" {
-  source = "../../terraform-modules/ec2_instance"
+  source = "../../terraform_modules/ec2_instance"
 
   ec2Instance_Config = local.instances
 }

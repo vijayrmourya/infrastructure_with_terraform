@@ -8,11 +8,11 @@ function prev_command_exit_status($status, $command)
 {
     if ($status -eq 0)
     {
-        decorate "terraform $command : executed successfully" "Green"
+        decorate "terraform $command | <STATUS><SUCCESS>" "Green"
     }
     else
     {
-        decorate "terraform $command : FAILED" "Red"
+        decorate "terraform $command | <STATUS><FAILED>" "Red"
         exit 0
     }
 }
@@ -25,7 +25,7 @@ function setup_log_trace()
 
 function initialize_terraform()
 {
-    decorate "Initializing Terraform: >terraform init" "Blue"
+    decorate "terraform init | Initializing Terraform as per configurations" "Blue"
     terraform get -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/get_log.txt"
     prev_command_exit_status $LASTEXITCODE "get"
     terraform init -upgrade -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/init_log.txt"
@@ -34,74 +34,73 @@ function initialize_terraform()
 
 function terraform_providers_versions()
 {
-    decorate "Here is your configuration tree and required providers with versions configured" "Blue"
+    decorate "terraform providers | provider configuration tree and required providers configured with their required versions settings" "Blue"
     terraform providers
     prev_command_exit_status $LASTEXITCODE "prviders"
-    decorate "Here is installed providers list with versions" "Blue"
+    decorate "terraform versions -v | installed providers list with versions installed" "Blue"
     terraform versions -v 2>&1 | Tee-Object -FilePath "$PWD/logs/providers_versions.txt"
     prev_command_exit_status $LASTEXITCODE "versions -v"
 }
 
 function format_tf_config_files()
 {
-    decorate "Formatting the files: >terraform fmt" "Blue"
+    decorate "terraform fmt | ReForming/prettifying the files" "Blue"
     terraform fmt -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/fmt_log.txt"
     prev_command_exit_status $LASTEXITCODE "fmt"
 }
 
 function validate_the_tf_configs()
 {
-    decorate "Validating the TF config: >terraform validate" "Blue"
+    decorate "terraform validate | Validating the terraform configuration code" "Blue"
     terraform validate -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/validate_log.txt"
     prev_command_exit_status $LASTEXITCODE "validate"
 }
 
 function state_managed_resources()
 {
-    decorate "listing the resources under state file:" "Blue"
+    decorate "terraform state list | listing all the resources under current config state file(if any)" "Blue"
     terraform state list | Tee-Object -FilePath "$PWD/resources.txt"
     prev_command_exit_status $LASTEXITCODE "state list"
 }
 
 function destroy_old_provisioned_resources()
 {
-    decorate "Do you want to destory old resources: >terraform destroy -auto-approve" "Red"
+    decorate "terraform destroy --auto-approve | Do you want to destory old resources" "Red"
     $destroy = Read-Host -Prompt "Select Y/y for yes else press any key?(Y/N)"
     if ($destroy -eq 'Y')
     {
-        decorate "terraform destroying all old resources please wait" "Red"
+        decorate "terraform destroying all old resources please wait.........." "Red"
         terraform destroy --auto-approve -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/destroy_log.txt" #-lock=false # need to remove -lock=false
         prev_command_exit_status $LASTEXITCODE "destroy"
     }
     else
     {
-        decorate "Skipped >terraform destroy" "Green"
+        decorate "terraform destroy | <SKIPPED>" "Green"
     }
 }
 
 function plan_infra()
 {
-    decorate "Showing the plan for configurations: >terraform plan" "Green"
+    decorate "terraform plan | Showing the plan for configurations" "Green"
     terraform plan -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/plan_log.txt"
     prev_command_exit_status $LASTEXITCODE "plan"
 }
 
 function create_infra()
 {
-    decorate "make a choice:" "Green"
     $planapply = Read-Host -Prompt "Do you want to apply the changes? Y/N"
     if ($planapply -eq 'Y')
     {
-        decorate "terraform Apply running: >terraform apply --auto-approve" "Red"
-        terraform apply --auto-approve -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/apply_log.txt"#-lock=false
+        decorate "terraform apply --auto-approve | creaing the planned resources! please wait........" "Red"
+        terraform apply --auto-approve -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/apply_log.txt"
         prev_command_exit_status $LASTEXITCODE "apply"
-        decorate "Saving output: >terraform output > output.txt" "Green"
+        decorate "terraform output > output.txt | Saving outputs to output.txt" "Green"
         terraform output > output.txt
         prev_command_exit_status $LASTEXITCODE "output > output.txt"
     }
     else
     {
-        decorate "terraform Apply skipped" "Red"
+        decorate "terraform Apply <SKIPPED>" "Red"
     }
 }
 

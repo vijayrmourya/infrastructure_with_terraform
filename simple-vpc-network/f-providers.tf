@@ -5,6 +5,6 @@ provider "aws" {
 }
 
 module "global_setting" {
-  source = "../../terraform-modules/global-settings"
+  source = "../../terraform_modules/global-settings"
   #  refer: https://github.com/vijayrmourya/terraform-modules
 }

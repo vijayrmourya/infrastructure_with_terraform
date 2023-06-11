@@ -8,11 +8,11 @@ function prev_command_exit_status($status, $command)
 {
     if ($status -eq 0)
     {
-        decorate "terraform $command : executed successfully" "Green"
+        decorate "terraform $command | <STATUS><SUCCESS>" "Green"
     }
     else
     {
-        decorate "terraform $command : FAILED" "Red"
+        decorate "terraform $command | <STATUS><FAILED>" "Red"
         exit 0
     }
 }
@@ -25,31 +25,31 @@ function setup_log_trace()
 
 function display_infra()
 {
-    decorate "Showing all provisioned resources: >terraform show" "Blue"
+    decorate "terraform show | Showing all provisioned resources in detail" "Blue"
     terraform show
     prev_command_exit_status $LASTEXITCODE "show"
 }
 
 function state_managed_resources()
 {
-    decorate "listing the resources under state file:" "Blue"
+    decorate "terraform state list | listing all the resources under current config state file(if any)" "Blue"
     terraform state list | Tee-Object -FilePath "$PWD/resources.txt"
     prev_command_exit_status $LASTEXITCODE "state list"
 }
 
 function destroy_all_provisioned_resources()
 {
-    decorate "Do you want to destory all resources: >terraform destroy -auto-approve" "Red"
+    decorate "terraform destroy --auto-approve | Do you want to destory all resources" "Red"
     $destroy = Read-Host -Prompt "Select Y/y for yes else press any key?(Y/N)"
     if ($destroy -eq 'Y')
     {
-        decorate "terraform destroying all resources please wait" "Red"
+        decorate "terraform destroying all resources please wait.........." "Red"
         terraform destroy --auto-approve -no-color 2>&1 | Tee-Object -FilePath "$PWD/logs/destroy_log.txt" #-lock=false # need to remove -lock=false
         prev_command_exit_status $LASTEXITCODE "destroy"
     }
     else
     {
-        decorate "Skipped >terraform destroy" "Green"
+        decorate "terraform destroy | <SKIPPED>" "Green"
     }
 }
 

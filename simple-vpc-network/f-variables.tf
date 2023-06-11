@@ -98,12 +98,12 @@ variable "securityGroupRules_config" {
 variable "ec2InstanceConfig" {
   default = {
     ubuntu_instance = {
-      ami                 = "ami-07ffb2f4d65357b42"
-      instance_type       = "t2.micro"
-      instanceName1       = "TestInstance_1"
-      instanceName2       = "TestInstance_2"
-      instanceName3       = "TestInstance_3"
-      instanceName4       = "TestInstance_4"
+      ami           = "ami-07ffb2f4d65357b42"
+      instance_type = "t2.micro"
+      instanceName1 = "TestInstance_1"
+      instanceName2 = "TestInstance_2"
+      instanceName3 = "TestInstance_3"
+      instanceName4 = "TestInstance_4"
     }
   }
 }
